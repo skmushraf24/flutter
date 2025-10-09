@@ -1,0 +1,124 @@
+ Create a Flutter app with two screens, each displaying a numerical value in its user interface. Upon pressing a floating action button on the home page, the value of the number will increase for both screens. Add navigation to switch between the two screens to observe the results. 
+
+
+source code:
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+// Root widget
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+// Using State here so both screens share the same counter value
+class _MyAppState extends State<MyApp> {
+  int counter = 0;
+
+  void incrementCounter() {
+    setState(() {
+      counter++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Two Screen Counter',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: HomeScreen(
+        counter: counter,
+        onIncrement: incrementCounter,
+      ),
+      routes: {
+        '/second': (context) => SecondScreen(
+              counter: counter,
+            ),
+      },
+    );
+  }
+}
+
+// 🏠 First screen
+class HomeScreen extends StatelessWidget {
+  final int counter;
+  final VoidCallback onIncrement;
+
+  const HomeScreen({
+    super.key,
+    required this.counter,
+    required this.onIncrement,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Home Screen')),
+      body: Center(
+        child: Text(
+          'Counter Value: $counter',
+          style: const TextStyle(fontSize: 26),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: onIncrement,
+        child: const Icon(Icons.add),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(color: Colors.blue),
+              child: Center(
+                child: Text('Navigation Menu',
+                    style: TextStyle(color: Colors.white, fontSize: 20)),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.navigate_next),
+              title: const Text('Go to Second Screen'),
+              onTap: () {
+                Navigator.pushNamed(context, '/second');
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// 📄 Second screen
+class SecondScreen extends StatelessWidget {
+  final int counter;
+
+  const SecondScreen({
+    super.key,
+    required this.counter,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Second Screen')),
+      body: Center(
+        child: Text(
+          'Counter Value: $counter',
+          style: const TextStyle(fontSize: 26),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.home),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+    );
+  }
+}
