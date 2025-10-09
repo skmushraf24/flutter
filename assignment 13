@@ -1,0 +1,57 @@
+ Create a clock. What will be your approach to solving this problem statement?
+
+soruce code:
+import 'dart:async';
+import 'package:flutter/material.dart';
+
+class SimpleClock extends StatefulWidget {
+  const SimpleClock({super.key});
+
+  @override
+  State<SimpleClock> createState() => _SimpleClockState();
+}
+
+class _SimpleClockState extends State<SimpleClock> {
+  late Timer _timer;
+  late DateTime _currentTime;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentTime = DateTime.now();
+
+    // ⏱ Update every 1 second
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        _currentTime = DateTime.now();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel(); // 🧹 Clean up the timer
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String formattedTime =
+        "${_currentTime.hour.toString().padLeft(2, '0')}:${_currentTime.minute.toString().padLeft(2, '0')}:${_currentTime.second.toString().padLeft(2, '0')}";
+
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Center(
+        child: Text(
+          formattedTime,
+          style: const TextStyle(
+            color: Colors.greenAccent,
+            fontSize: 48,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 2,
+          ),
+        ),
+      ),
+    );
+  }
+}
