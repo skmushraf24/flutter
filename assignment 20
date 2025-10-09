@@ -1,0 +1,41 @@
+ Build a Flutter widget that displays two text elements in two separate columns. The first text element should say "First Name" and the second should say "Last Name". Make sure the two text elements are evenly spaced and centered within their respective columns. 
+
+source code:
+import 'package:flutter/material.dart';
+
+class TwoColumnText extends StatelessWidget {
+  const TwoColumnText({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Two Column Text Example")),
+      body: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Even spacing between columns
+          crossAxisAlignment: CrossAxisAlignment.center, // Vertically center
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center, // Center text vertically
+              children: const [
+                Text(
+                  "First Name",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Text(
+                  "Last Name",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
