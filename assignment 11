@@ -1,0 +1,137 @@
+How to Show this result based on the given details:
+
+True-answers=6
+Wrong -answers=0
+Total-questions=6
+
+
+soruce code:
+
+
+
+import 'package:flutter/material.dart';
+
+class ResultScreen extends StatelessWidget {
+  final int trueAnswers;
+  final int wrongAnswers;
+  final int totalQuestions;
+
+  const ResultScreen({
+    super.key,
+    required this.trueAnswers,
+    required this.wrongAnswers,
+    required this.totalQuestions,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    double percentage = (trueAnswers / totalQuestions) * 100;
+    bool isPassed = percentage >= 60;
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 📊 Stats Row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Left Column (stats)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildInfoBox(Colors.blue, "Total Question", totalQuestions),
+                      const SizedBox(height: 10),
+                      _buildInfoBox(Colors.green, "True Question", trueAnswers),
+                      const SizedBox(height: 10),
+                      _buildInfoBox(Colors.red, "Wrong Answer", wrongAnswers),
+                    ],
+                  ),
+
+                  const SizedBox(width: 40),
+
+                  // Right Column (Percentage & Status)
+                  Column(
+                    children: [
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          SizedBox(
+                            height: 80,
+                            width: 80,
+                            child: CircularProgressIndicator(
+                              value: percentage / 100,
+                              strokeWidth: 6,
+                              color: isPassed ? Colors.green : Colors.red,
+                              backgroundColor: Colors.grey[200],
+                            ),
+                          ),
+                          Text(
+                            "${percentage.toStringAsFixed(2)}%",
+                            style: TextStyle(
+                              color: isPassed ? Colors.green : Colors.red,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        isPassed ? "Passed" : "Failed",
+                        style: TextStyle(
+                          color: isPassed ? Colors.green : Colors.red,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 40),
+
+              // 🎉 Message
+              Text(
+                isPassed
+                    ? "Congratulations! You are passed."
+                    : "Better luck next time!",
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // 🏆 Image
+              Image.asset(
+                isPassed ? 'assets/images/trophy.png' : 'assets/images/failed.png',
+                width: 150,
+                height: 150,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Helper widget for info boxes
+  Widget _buildInfoBox(Color color, String label, int value) {
+    return Row(
+      children: [
+        Container(width: 20, height: 20, color: color),
+        const SizedBox(width: 8),
+        Text(
+          "$label  $value",
+          style: const TextStyle(fontSize: 16),
+        ),
+      ],
+    );
+  }
+}
