@@ -1,0 +1,78 @@
+Create a sample drawing app whose background should be white and where the user just draws something.
+
+Hint 1:- Use the inbuilt paint library of Dart.
+
+source code:
+import 'package:flutter/material.dart';
+
+class SimpleDrawingApp extends StatefulWidget {
+  const SimpleDrawingApp({super.key});
+
+  @override
+  State<SimpleDrawingApp> createState() => _SimpleDrawingAppState();
+}
+
+class _SimpleDrawingAppState extends State<SimpleDrawingApp> {
+  // List to hold all drawing points
+  List<Offset?> points = [];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white, // White background
+      appBar: AppBar(title: const Text("Simple Drawing App")),
+      body: GestureDetector(
+        onPanStart: (details) {
+          setState(() {
+            points.add(details.localPosition);
+          });
+        },
+        onPanUpdate: (details) {
+          setState(() {
+            points.add(details.localPosition);
+          });
+        },
+        onPanEnd: (details) {
+          setState(() {
+            points.add(null); // Separate strokes
+          });
+        },
+        child: CustomPaint(
+          painter: MyPainter(points),
+          size: Size.infinite,
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            points.clear(); // Clear the canvas
+          });
+        },
+        child: const Icon(Icons.delete),
+      ),
+    );
+  }
+}
+
+class MyPainter extends CustomPainter {
+  final List<Offset?> points;
+  MyPainter(this.points);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.black // Stroke color
+      ..strokeWidth = 4.0 // Line thickness
+      ..strokeCap = StrokeCap.round // Rounded line edges
+      ..isAntiAlias = true; // Smooth drawing
+
+    for (int i = 0; i < points.length - 1; i++) {
+      if (points[i] != null && points[i + 1] != null) {
+        canvas.drawLine(points[i]!, points[i + 1]!, paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(MyPainter oldDelegate) => true;
+}
