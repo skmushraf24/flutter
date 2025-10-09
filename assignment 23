@@ -1,0 +1,146 @@
+ Build a Flutter application with two screens, "About" and "Home". Use a dedicated routing class and allow the background color of the Scaffold and AppBar in the About screen to be set from the Home screen.
+
+source code:
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+// Root Widget
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Routing with Color Example',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      onGenerateRoute: AppRouter.generateRoute, // ✅ use dedicated routing class
+      initialRoute: '/',
+    );
+  }
+}
+
+// 🚀 Dedicated Routing Class
+class AppRouter {
+  static Route<dynamic> generateRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case '/':
+        return MaterialPageRoute(builder: (_) => const HomeScreen());
+      case '/about':
+        final Color color = settings.arguments as Color;
+        return MaterialPageRoute(
+          builder: (_) => AboutScreen(bgColor: color),
+        );
+      default:
+        return MaterialPageRoute(
+          builder: (_) => const Scaffold(
+            body: Center(child: Text('Page not found!')),
+          ),
+        );
+    }
+  }
+}
+
+// 🏠 Home Screen
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  Color selectedColor = Colors.blue; // Default color
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Home Screen')),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'Select a Color for About Screen:',
+            style: TextStyle(fontSize: 18),
+          ),
+          const SizedBox(height: 20),
+
+          // 🔵 Color Selection Buttons
+          Wrap(
+            spacing: 10,
+            children: [
+              _colorButton(Colors.blue),
+              _colorButton(Colors.green),
+              _colorButton(Colors.orange),
+              _colorButton(Colors.purple),
+              _colorButton(Colors.red),
+            ],
+          ),
+
+          const SizedBox(height: 40),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(
+                context,
+                '/about',
+                arguments: selectedColor, // ✅ pass selected color
+              );
+            },
+            child: const Text('Go to About Screen'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Helper for color selection
+  Widget _colorButton(Color color) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedColor = color;
+        });
+      },
+      child: Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          color: color,
+          border: Border.all(
+            color: selectedColor == color ? Colors.black : Colors.transparent,
+            width: 3,
+          ),
+          borderRadius: BorderRadius.circular(25),
+        ),
+      ),
+    );
+  }
+}
+
+// ℹ️ About Screen
+class AboutScreen extends StatelessWidget {
+  final Color bgColor;
+
+  const AboutScreen({super.key, required this.bgColor});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: bgColor,
+      appBar: AppBar(
+        title: const Text('About Screen'),
+        backgroundColor: bgColor,
+      ),
+      body: const Center(
+        child: Text(
+          'This is the About Screen',
+          style: TextStyle(fontSize: 22, color: Colors.white),
+        ),
+      ),
+    );
+  }
+}
+
