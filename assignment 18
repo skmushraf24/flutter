@@ -1,0 +1,52 @@
+ You are working on a Content-based application based on a flutter, client wants you to show a random lucky number on the click button. Which is the max limit is 350. What things will you require to achieve this Problem statement?
+
+Hint 1:- Add the method for generating random lucky numbers.
+Hint 2:- Add text and an Elevated button widget.
+
+source code:
+import 'dart:math';
+import 'package:flutter/material.dart';
+
+class LuckyNumberApp extends StatefulWidget {
+  const LuckyNumberApp({super.key});
+
+  @override
+  State<LuckyNumberApp> createState() => _LuckyNumberAppState();
+}
+
+class _LuckyNumberAppState extends State<LuckyNumberApp> {
+  int? luckyNumber;
+
+  // 🔢 Method to generate random number between 1 and 350
+  void generateLuckyNumber() {
+    setState(() {
+      luckyNumber = Random().nextInt(350) + 1;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Random Lucky Number")),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              luckyNumber == null
+                  ? "Press the button to get your lucky number!"
+                  : "Your Lucky Number is: $luckyNumber",
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: generateLuckyNumber,
+              child: const Text("Get Lucky Number"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
