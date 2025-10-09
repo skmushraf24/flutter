@@ -1,0 +1,75 @@
+Create a Flutter application using Riverpod state management where pressing a button changes the background color of the appBar and Scaffold, as well as plays one of 10 music notes. 
+
+source code:
+import 'dart:math';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:audioplayers/audioplayers.dart';
+
+// 🎨 Provider to manage background color
+final colorProvider = StateProvider<Color>((ref) => Colors.blue);
+
+// 🎵 Provider to handle playing random notes
+final audioPlayerProvider = Provider<AudioPlayer>((ref) => AudioPlayer());
+
+void main() {
+  runApp(const ProviderScope(child: MyApp()));
+}
+
+class MyApp extends ConsumerWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final color = ref.watch(colorProvider);
+
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: color,
+        appBar: AppBar(
+          title: const Text("Riverpod Music & Color App"),
+          backgroundColor: color,
+        ),
+        body: const Center(
+          child: ColorMusicButton(),
+        ),
+      ),
+    );
+  }
+}
+
+// 🎵 Button Widget that changes color and plays a note
+class ColorMusicButton extends ConsumerWidget {
+  const ColorMusicButton({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+      ),
+      onPressed: () async {
+        // Change color randomly
+        final random = Random();
+        final newColor = Color.fromARGB(
+          255,
+          random.nextInt(256),
+          random.nextInt(256),
+          random.nextInt(256),
+        );
+        ref.read(colorProvider.notifier).state = newColor;
+
+        // Play a random note
+        final noteNum = random.nextInt(10) + 1;
+        final player = ref.read(audioPlayerProvider);
+        await player.play(AssetSource('note$noteNum.wav'));
+      },
+      child: const Text(
+        'Play Note & Change Color',
+        style: TextStyle(fontSize: 18, color: Colors.black),
+      ),
+    );
+  }
+}
