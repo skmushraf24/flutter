@@ -1,0 +1,95 @@
+Render given images if the index is odd then display the first image and if even then display the second image and also display the index number above the image in the left corner. and the max count should be 20. What will be your approach to solving this problem statement?
+
+Image1: https://i.picsum.photos/id/9/250/250.jpg?hmac=tqDH5wEWHDN76mBIWEPzg1in6egMl49qZeguSaH9_VI
+
+Image2: https://images.pexels.com/photos/213780/pexels-photo-213780.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500
+
+Hint 1:- Use listview.builder or gridview
+
+Hint 2:- Add logic to find the odd and even number
+
+Hint 3:- Add network.image widget for rendering the internet image in UI
+
+source coe:
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: ImageGridExample(),
+    );
+  }
+}
+
+class ImageGridExample extends StatelessWidget {
+  // Hint 1: Declare image URLs
+  final String image1 =
+      "https://i.picsum.photos/id/9/250/250.jpg?hmac=tqDH5wEWHDN76mBIWEPzg1in6egMl49qZeguSaH9_VI";
+  final String image2 =
+      "https://images.pexels.com/photos/213780/pexels-photo-213780.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500";
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Odd/Even Image Renderer"),
+        centerTitle: true,
+      ),
+      body: GridView.builder(
+        // Hint 1: Use gridview.builder
+        itemCount: 20, // max count = 20
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, // show two per row
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+        ),
+        itemBuilder: (context, index) {
+          // Hint 2: Add logic for odd and even
+          final bool isOdd = index % 2 != 0;
+          final imageUrl = isOdd ? image1 : image2;
+
+          return Stack(
+            children: [
+              // Hint 3: Use NetworkImage for rendering images
+              Positioned.fill(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 8,
+                left: 8,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    "#$index",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
