@@ -1,0 +1,73 @@
+Show a gif in UI that is based on a timer. If the timer is equal and less than 15 seconds then show the gif else display a message like running time has been over. How will you solve this problem statement? 
+
+source code:
+import 'package:flutter/material.dart';
+import 'dart:async';
+
+void main() {
+  runApp(RunningGifApp());
+}
+
+class RunningGifApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: RunningScreen(),
+    );
+  }
+}
+
+class RunningScreen extends StatefulWidget {
+  @override
+  _RunningScreenState createState() => _RunningScreenState();
+}
+
+class _RunningScreenState extends State<RunningScreen> {
+  bool showGif = true; // Hint 2: flag to track time
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Hint 1: Use Future.delayed for 15 seconds
+    Future.delayed(const Duration(seconds: 15), () {
+      setState(() {
+        showGif = false; // Hide gif after 15 sec
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text("Running Timer Example"),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: showGif
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/running.gif', // use your uploaded gif path here
+                    height: 200,
+                    width: 200,
+                    fit: BoxFit.cover,
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    "Running...",
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              )
+            : const Text(
+                "Running time has been over!",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.red),
+              ),
+      ),
+    );
+  }
+}
