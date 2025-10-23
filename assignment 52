@@ -1,0 +1,108 @@
+Develop a Flutter application that follows the Model-View-ViewModel (MVVM) pattern and has similar functionality to the default counter app in Flutter. 
+
+code:
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+void main() {
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => CounterViewModel(),
+      child: MyApp(),
+    ),
+  );
+}
+
+/// =====================
+/// MODEL
+/// =====================
+class Counter {
+  int value;
+  Counter({this.value = 0});
+}
+
+/// =====================
+/// VIEWMODEL
+/// =====================
+class CounterViewModel extends ChangeNotifier {
+  final Counter _counter = Counter();
+
+  int get counter => _counter.value;
+
+  void increment() {
+    _counter.value++;
+    notifyListeners();
+  }
+
+  void decrement() {
+    _counter.value--;
+    notifyListeners();
+  }
+
+  void reset() {
+    _counter.value = 0;
+    notifyListeners();
+  }
+}
+
+/// =====================
+/// VIEW
+/// =====================
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'MVVM Counter App',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: CounterView(),
+    );
+  }
+}
+
+class CounterView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final counterVM = Provider.of<CounterViewModel>(context);
+
+    return Scaffold(
+      appBar: AppBar(title: Text('MVVM Counter App')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'You have pushed the button this many times:',
+              style: TextStyle(fontSize: 18),
+            ),
+            SizedBox(height: 10),
+            Text(
+              '${counterVM.counter}',
+              style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: counterVM.increment,
+                  child: Text('+'),
+                ),
+                SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: counterVM.decrement,
+                  child: Text('-'),
+                ),
+                SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: counterVM.reset,
+                  child: Text('Reset'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
