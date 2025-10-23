@@ -1,0 +1,50 @@
+: Write a Flutter program to construct a container similar to the one shown below:
+code:
+ import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: GlowingMessage(),
+        ),
+      ),
+    );
+  }
+}
+
+class GlowingMessage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.cyanAccent.shade200, // background color
+        borderRadius: BorderRadius.circular(20), // rounded edges
+        boxShadow: [
+          BoxShadow(
+            color: Colors.pinkAccent.withOpacity(0.7), // glow color
+            blurRadius: 20, // softness of the glow
+            spreadRadius: 2, // how much the glow spreads
+          ),
+        ],
+      ),
+      child: Text(
+        "Hello I'm",
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+}
