@@ -1,0 +1,128 @@
+ Create a Form with two TextFormFields that require user input and a button to submit the form. Use the Provider package to pass the form data to another widget.
+
+code:
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+/// Step 1: Create a Provider class to hold the form data
+class FormDataProvider with ChangeNotifier {
+  String _firstName = '';
+  String _lastName = '';
+
+  String get firstName => _firstName;
+  String get lastName => _lastName;
+
+  void setFormData(String first, String last) {
+    _firstName = first;
+    _lastName = last;
+    notifyListeners();
+  }
+}
+
+/// Step 2: Main function and root widget
+void main() {
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => FormDataProvider(),
+      child: MyApp(),
+    ),
+  );
+}
+
+/// Step 3: App structure
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Provider Form Example',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: FormScreen(),
+    );
+  }
+}
+
+/// Step 4: Form screen with two TextFormFields and a Submit button
+class FormScreen extends StatefulWidget {
+  @override
+  _FormScreenState createState() => _FormScreenState();
+}
+
+class _FormScreenState extends State<FormScreen> {
+  final _formKey = GlobalKey<FormState>();
+  String firstName = '';
+  String lastName = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("User Form")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextFormField(
+                decoration: InputDecoration(labelText: "First Name"),
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Enter first name' : null,
+                onSaved: (value) => firstName = value!,
+              ),
+              SizedBox(height: 12),
+              TextFormField(
+                decoration: InputDecoration(labelText: "Last Name"),
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Enter last name' : null,
+                onSaved: (value) => lastName = value!,
+              ),
+              SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+
+                    // Save form data using Provider
+                    Provider.of<FormDataProvider>(context, listen: false)
+                        .setFormData(firstName, lastName);
+
+                    // Navigate to the Display screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => DisplayScreen()),
+                    );
+                  }
+                },
+                child: Text("Submit"),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Step 5: Display screen that shows the form data using Provider
+class DisplayScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final formData = Provider.of<FormDataProvider>(context);
+
+    return Scaffold(
+      appBar: AppBar(title: Text("Display Data")),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("First Name: ${formData.firstName}",
+                style: TextStyle(fontSize: 20)),
+            Text("Last Name: ${formData.lastName}",
+                style: TextStyle(fontSize: 20)),
+          ],
+        ),
+      ),
+    );
+  }
+}
