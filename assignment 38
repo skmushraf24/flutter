@@ -1,0 +1,77 @@
+ Your client has asked you to display each user's email and name from their Firestore collection named "users" in your application. Utilize the ListTile widget for presentation.
+
+
+code:
+
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(); // Initialize Firebase
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Firestore User List',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: UsersScreen(),
+    );
+  }
+}
+
+/// Screen that displays users from Firestore
+class UsersScreen extends StatelessWidget {
+  final CollectionReference usersRef =
+      FirebaseFirestore.instance.collection('users');
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('User List')),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: usersRef.snapshots(), // Listen to real-time updates
+        builder: (context, snapshot) {
+          // Loading state
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          // Error state
+          if (snapshot.hasError) {
+            return Center(child: Text("Error fetching data"));
+          }
+
+          // Data available
+          final users = snapshot.data!.docs;
+
+          if (users.isEmpty) {
+            return Center(child: Text("No users found"));
+          }
+
+          return ListView.builder(
+            itemCount: users.length,
+            itemBuilder: (context, index) {
+              var user = users[index];
+              var name = user['name'] ?? 'No Name';
+              var email = user['email'] ?? 'No Email';
+
+              return ListTile(
+                leading: CircleAvatar(
+                  child: Text(name[0].toUpperCase()),
+                ),
+                title: Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text(email),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
