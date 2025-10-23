@@ -1,0 +1,81 @@
+Create a simple Provider that provides a counter value and a button to increment the counter. Display the counter value in another widget.
+
+code:
+
+
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+/// Step 1: Create a simple Provider class
+class CounterProvider with ChangeNotifier {
+  int _counter = 0;
+
+  int get counter => _counter;
+
+  void increment() {
+    _counter++;
+    notifyListeners(); // Notify widgets to rebuild when value changes
+  }
+}
+
+/// Step 2: Main function and root widget
+void main() {
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => CounterProvider(),
+      child: MyApp(),
+    ),
+  );
+}
+
+/// Step 3: The main app widget
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Provider Counter Example',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: CounterScreen(),
+    );
+  }
+}
+
+/// Step 4: Counter screen with button and display
+class CounterScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final counterProvider = Provider.of<CounterProvider>(context, listen: false);
+
+    return Scaffold(
+      appBar: AppBar(title: Text("Provider Counter")),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CounterDisplay(), // Separate widget to show counter value
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: counterProvider.increment,
+              child: Text("Increment Counter"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Step 5: Separate widget that listens to counter changes
+class CounterDisplay extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // This widget rebuilds only when the counter changes
+    final counterValue = context.watch<CounterProvider>().counter;
+
+    return Text(
+      'Counter Value: $counterValue',
+      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    );
+  }
+}
