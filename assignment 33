@@ -1,0 +1,79 @@
+Create a simple Provider that provides a counter value and a button to increment the counter. Display the counter value in another widget.
+
+code:
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+/// Step 1: Create a Provider class
+class CounterProvider with ChangeNotifier {
+  int _count = 0;
+
+  int get count => _count;
+
+  void increment() {
+    _count++;
+    notifyListeners(); // Tells listeners (widgets) to rebuild
+  }
+}
+
+/// Step 2: Main function
+void main() {
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => CounterProvider(),
+      child: MyApp(),
+    ),
+  );
+}
+
+/// Step 3: Main app
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Provider Counter Example',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: CounterScreen(),
+    );
+  }
+}
+
+/// Step 4: Screen with button and counter display
+class CounterScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final counterProvider = Provider.of<CounterProvider>(context, listen: false);
+
+    return Scaffold(
+      appBar: AppBar(title: Text('Provider Counter')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CounterDisplay(), // Separate widget that listens to changes
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: counterProvider.increment,
+              child: Text('Increment Counter'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Step 5: Widget that displays the counter value
+class CounterDisplay extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Only this widget rebuilds when the counter changes
+    final count = context.watch<CounterProvider>().count;
+
+    return Text(
+      'Counter Value: $count',
+      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    );
+  }
+}
